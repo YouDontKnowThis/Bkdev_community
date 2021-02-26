@@ -4,21 +4,34 @@ import SendIcon from "@material-ui/icons/Send";
 import MoodIcon from "@material-ui/icons/Mood";
 import Picker, { SKIN_TONE_MEDIUM_DARK } from "emoji-picker-react";
 
-function ChatInput() {
+function ChatInput({ sendMessage }) {
   const [showEmojies, setShowEojies] = useState(false);
   const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [input, setInput] = useState("");
 
   const onEmojiClick = (event, emojiObject) => {
     setChosenEmoji(emojiObject);
+  };
+
+  const send = (e) => {
+    e.preventDefault();
+    if (input === "") return;
+    sendMessage(input);
+    setInput("");
   };
 
   return (
     <Container>
       <InputCntainer>
         <form>
-          <input type="text" name="" placeholder="message here..." />
+          <input
+            type="text"
+            value={input}
+            placeholder="message here..."
+            onChange={(e) => setInput(e.target.value)}
+          />
           <Mood onClick={() => setShowEojies(!showEmojies)} />
-          <SendButton>
+          <SendButton onClick={send} type="submit">
             <SendIconMessage />
           </SendButton>
           {showEmojies ? (
@@ -65,7 +78,13 @@ const InputCntainer = styled.div`
     }
   }
 `;
-const SendButton = styled.div``;
+const SendButton = styled.button`
+  border: none;
+  background-color: transparent;
+  :focus {
+    outline: none;
+  }
+`;
 const SendIconMessage = styled(SendIcon)`
   color: #532753;
   cursor: pointer;

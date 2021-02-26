@@ -25,7 +25,7 @@ const Container = styled.div`
   background-color: #eee;
   margin: 10px;
   width: max-content;
-  max-width: 400px;
+  max-width: 500px;
   border-radius: 5px;
 `;
 const UserAvatar = styled.div`

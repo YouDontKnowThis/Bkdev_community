@@ -3,10 +3,11 @@ import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
 import styled from "styled-components";
-import { dtb } from "../firebase";
 import { useParams } from "react-router-dom";
+import firebase from "firebase";
+import { dtb } from "../firebase";
 
-function Chat() {
+function Chat({ user }) {
   let { channelId } = useParams();
   const [channel, setChannel] = useState();
   const [messages, setMessages] = useState([]);
@@ -38,11 +39,28 @@ function Chat() {
     getMessages();
   }, [channelId]);
 
+  const sendMessage = (text) => {
+    if (channelId) {
+      let payload = {
+        text: text,
+        user: user.name,
+        userImg: user.photo,
+        timestamp: firebase.firestore.Timestamp.now(),
+      };
+
+      dtb
+        .collection("rooms")
+        .doc(channelId)
+        .collection("messages")
+        .add(payload);
+    }
+  };
+
   return (
     <Container>
       <Header>
         <Channel>
-          <ChannelName>{`# ${channel?.name}`}</ChannelName>
+          <ChannelName>{`# ${channel?.name || "Channel"}`}</ChannelName>
           <ChannelInfo>This is some channel info</ChannelInfo>
         </Channel>
         <ChannelDetails>
@@ -53,6 +71,7 @@ function Chat() {
       <MesssageContainer>
         {messages?.map((data, idx) => (
           <ChatMessage
+            key={idx}
             name={data.user}
             text={data.text}
             image={data.userImg}
@@ -60,7 +79,7 @@ function Chat() {
           />
         ))}
       </MesssageContainer>
-      <ChatInput />
+      <ChatInput sendMessage={sendMessage} />
     </Container>
   );
 }
@@ -71,6 +90,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 0;
 `;
 const Header = styled.div`
   height: 64px;
@@ -83,6 +103,9 @@ const Header = styled.div`
 `;
 const MesssageContainer = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
 `;
 
 const Channel = styled.div``;

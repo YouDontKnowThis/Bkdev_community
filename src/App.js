@@ -46,7 +46,7 @@ function App() {
               <Sidebar rooms={rooms} />
               <Switch>
                 <Route path="/room/:channelId">
-                  <Chat />
+                  <Chat user={user} />
                 </Route>
                 <Route path="/">Select or Create a New Channel</Route>
               </Switch>
@@ -64,7 +64,7 @@ const Container = styled.div`
   width: 100%;
   height: 100vh;
   display: grid;
-  grid-template-rows: 39px auto;
+  grid-template-rows: 39px minmax(0, 1fr);
 `;
 
 const Main = styled.div`
